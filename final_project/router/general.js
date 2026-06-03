@@ -6,11 +6,6 @@ let users = require("./auth_users.js").users;
 const public_users = express.Router();
 const BASE_URL = "http://localhost:5000";
 
-const fetchBooks = async () => {
-  const response = await axios.get(`${BASE_URL}/books`);
-  return response.data;
-};
-
 
 public_users.post("/register", (req,res) => {
   const { username, password } = req.body || {};
@@ -35,7 +30,8 @@ public_users.get('/books', function (req, res) {
 // Get the book list available in the shop
 public_users.get('/', async function (req, res) {
   try {
-    const allBooks = await fetchBooks();
+    const response = await axios.get(`${BASE_URL}/books`);
+    const allBooks = response.data;
     return res.status(200).json(allBooks);
   } catch (error) {
     return res.status(500).json({ message: "Failed to fetch books" });
@@ -46,7 +42,8 @@ public_users.get('/', async function (req, res) {
 public_users.get('/isbn/:isbn', async function (req, res) {
   try {
     const { isbn } = req.params;
-    const allBooks = await fetchBooks();
+    const response = await axios.get(`${BASE_URL}/books`);
+    const allBooks = response.data;
     const book = allBooks[isbn];
 
     if (!book) {
@@ -64,7 +61,8 @@ public_users.get('/author/:author', async function (req, res) {
   try {
     const { author } = req.params;
     const authorQuery = author.toLowerCase();
-    const allBooks = await fetchBooks();
+    const response = await axios.get(`${BASE_URL}/books`);
+    const allBooks = response.data;
     const matches = Object.keys(allBooks)
       .filter((isbn) => allBooks[isbn].author.toLowerCase() === authorQuery)
       .map((isbn) => ({ isbn, ...allBooks[isbn] }));
@@ -84,7 +82,8 @@ public_users.get('/title/:title', async function (req, res) {
   try {
     const { title } = req.params;
     const titleQuery = title.toLowerCase();
-    const allBooks = await fetchBooks();
+    const response = await axios.get(`${BASE_URL}/books`);
+    const allBooks = response.data;
     const matches = Object.keys(allBooks)
       .filter((isbn) => allBooks[isbn].title.toLowerCase() === titleQuery)
       .map((isbn) => ({ isbn, ...allBooks[isbn] }));
@@ -103,7 +102,8 @@ public_users.get('/title/:title', async function (req, res) {
 public_users.get('/review/:isbn', async function (req, res) {
   try {
     const { isbn } = req.params;
-    const allBooks = await fetchBooks();
+    const response = await axios.get(`${BASE_URL}/books`);
+    const allBooks = response.data;
     const book = allBooks[isbn];
 
     if (!book) {
